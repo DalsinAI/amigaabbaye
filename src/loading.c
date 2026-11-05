@@ -9,7 +9,7 @@ void loaddata(uint stagedata[][22][32],int enemydata[][7][15]) {
 	temp[3] = 0;
 
 	/* Loading stage data file */
-	datafile = fopen(DATADIR "/data/map.txt", "r");
+	datafile = fopen(DATAPATH("data/map.txt"), "r");
 	fgets (line, 129, datafile); /* skip header */
 	fgets (line, 129, datafile);
 
@@ -31,7 +31,7 @@ void loaddata(uint stagedata[][22][32],int enemydata[][7][15]) {
 	fclose (datafile);
 
 	/* Loading enemies data file */
-	datafile = fopen(DATADIR "/data/enemies.txt", "r");
+	datafile = fopen(DATAPATH("data/enemies.txt"), "r");
 	fgets (line2, 61, datafile);  /* skip header */
 	fgets (line2, 61, datafile);
 
@@ -78,13 +78,13 @@ void loadingmusic(Mix_Music *bso[],Mix_Chunk *fx[]) {
 }
 
 static char* makepath(const char *folder, const char *file, const char *ext) {
-	static int len1 = strlen(DATADIR) + 1; // sep
+	int len1 = strlen(DATAPATH(""));
 	int len2 = strlen(folder) + 1; // sep
 	int len3 = strlen(file) + 1; // sep
 	int len4 = strlen(ext) + 1; // null
 
 	char *result = malloc(len1+len2+len3+len4);
-	sprintf(result, "%s/%s/%s.%s", DATADIR, folder, file, ext);
+	sprintf(result, "%s%s/%s.%s", DATAPATH(""), folder, file, ext);
 
 	return result;
 }

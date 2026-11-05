@@ -130,7 +130,7 @@ void history(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscr
 				break;
 			case OPT_FULLSCREEN:	// Switch fullscreen/windowed
 				if (*fullscreen == 0) {
-					SDL_SetWindowFullscreen(screen,SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_SetWindowFullscreen(screen,FULLSCREEN_MODE);
 					*fullscreen = 1;
 				} else {
 					SDL_SetWindowFullscreen(screen,0);

@@ -1,0 +1,18 @@
+L'Abbaye des Morts: licences
+============================
+
+The game: L'Abbaye des Morts (2010) by Locomalito (design, graphics), with
+music and sound effects by Gryzor87; the SDL 2 C version by David "Nevat"
+Lara and Carsten Teibes, https://github.com/nevat/abbayedesmorts-gpl.
+
+- The program (src/) is under the GNU General Public License, version 3
+  (COPYING.txt).
+- The graphics (graphics/, the icon) and the sounds and music (sounds/)
+  are under the Creative Commons Attribution 3.0 licence (CC BY 3.0,
+  https://creativecommons.org/licenses/by/3.0/), as upstream's ReadMe.md
+  states: "The Graphics and Sounds have been released under the CC-BY-3.0
+  license." Credit: Locomalito (graphics) and Gryzor87 (music and sound).
+- The room and enemy tables (data/) come with the GPL source.
+- The Amiga port's own files (amiga/) are GPL 3, like the program.
+
+The data files are upstream's own, unchanged.
