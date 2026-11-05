@@ -27,3 +27,15 @@ extern void gamepad_remove (SDL_JoystickID joy_id);
 
 #define SCREEN_W 256
 #define SCREEN_H 192
+
+#ifdef __amigaos__
+/* The data sits beside the program; "PROGDIR:/x" would be its parent. A full
+ * screen is a screen of the window's own size, not the Workbench's. */
+#  undef DATADIR
+#  define DATADIR "PROGDIR:"
+#  define DATAPATH(p) "PROGDIR:" p
+#  define FULLSCREEN_MODE SDL_WINDOW_FULLSCREEN
+#else
+#  define DATAPATH(p) DATADIR "/" p
+#  define FULLSCREEN_MODE SDL_WINDOW_FULLSCREEN_DESKTOP
+#endif

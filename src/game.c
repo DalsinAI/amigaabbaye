@@ -47,7 +47,7 @@ void game(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscreen
 	uint winfull = *fullscreen;
 
 	/* Loading PNG */
-	SDL_Surface *tilesb = IMG_Load(DATADIR "/graphics/tiles.png");
+	SDL_Surface *tilesb = IMG_Load(DATAPATH("graphics/tiles.png"));
 	SDL_SetColorKey(tilesb, SDL_TRUE, SDL_MapRGB(tilesb->format, 0, 0, 0) );
 	SDL_Texture *tiles = SDL_CreateTextureFromSurface(renderer, tilesb);
 	SDL_FreeSurface(tilesb);
@@ -122,7 +122,7 @@ void game(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *fullscreen
 			// Switch fullscreen/windowed requested
 			case KEY_FULLSCREEN:
 				if (*fullscreen == 0) {
-					SDL_SetWindowFullscreen(screen,SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_SetWindowFullscreen(screen,FULLSCREEN_MODE);
 					*fullscreen = 1;
 				}
 				else {
@@ -852,5 +852,10 @@ void keybpause (uint *keyp) {
 				break;
 		}
 	}
+#ifdef __amigaos__
+	/* Called in a loop until a key comes: leave the CPU to the others. */
+	if (*keyp == KEY_NONE)
+		SDL_Delay(10);
+#endif
 
 }

@@ -102,6 +102,11 @@ void startscreen(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *ful
 					break;
 			}
 		}
+#ifdef __amigaos__
+		/* Nothing to draw until a key: leave the CPU to the others. */
+		else
+			SDL_Delay(10);
+#endif
 
 		switch (option) {
 			case OPT_STARTGAME:
@@ -126,7 +131,7 @@ void startscreen(SDL_Window *screen,uint8_t *state,uint8_t *grapset,uint8_t *ful
 				break;
 			case OPT_FULLSCREEN:	// Switch fullscreen/windowed
 				if (*fullscreen == 0) {
-					SDL_SetWindowFullscreen(screen,SDL_WINDOW_FULLSCREEN_DESKTOP);
+					SDL_SetWindowFullscreen(screen,FULLSCREEN_MODE);
 					*fullscreen = 1;
 				} else {
 					SDL_SetWindowFullscreen(screen,0);

@@ -11,3 +11,6 @@ abbayev2
 *.pfs0
 build/
 romfs/
+
+# amiga
+dist/

@@ -1,0 +1,87 @@
+# L'Abbaye des Morts for AmigaOS 3.x, 68040/68060 + FPU, on OpenGPU's SDL 2
+# (with SDL2_image and SDL2_mixer).
+#
+#   make -f amiga/Makefile.amigaos -j2 \
+#        STOVE=/path/to/openamigagcc-16.2.0-open4 \
+#        NDK=/path/to/OpenNDK/Include_H SDL2KIT=/path/to/opengpu-sdk
+#
+# STOVE is GFOpenAmigaGCC 16.2.0-open4 or later. SDL2KIT is the OpenGPU
+# developer kit: libSDL2.a, libSDL2_image.a and libSDL2_mixer.a, the
+# program's halves of LIBS:OpenGPU/SDL2.module, SDL2_image.module (the PNG
+# pictures) and SDL2_mixer.module (the Ogg Vorbis music and effects).
+# The data is read from PROGDIR: (src/base.h).
+#
+# Output: build/amigaos/Abbaye; 'dist' makes dist/Abbaye/ (the program,
+# graphics, sounds, data, ReadMe and the licences, with GlowIcons) and
+# dist/Abbaye.info.
+
+STOVE   ?= $(HOME)/CradleLab/toolchain/openamigagcc-16.2.0-open4-x86_64-linux
+NDK     ?= $(HOME)/CradleLab/gfopensdk/OpenNDK/Include_H
+SDL2KIT ?= /mnt/amigachrome/team2/deps/opengpu-sdk
+CC      = $(STOVE)/bin/m68k-amigaos-gcc
+CPU     ?= -m68040 -m68881
+# -fno-tree-loop-distribute-patterns: GCC 16's loop miscompile (the kit's
+# sdl2-config gives it for GCC 16 too).
+OPT     ?= -O2 -fomit-frame-pointer -fno-tree-loop-distribute-patterns
+
+DEFS    = -D__amigaos__
+INC     = -I$(SDL2KIT)/include/SDL2
+CFLAGS  = -noixemul $(OPT) $(CPU) -std=gnu99 $(DEFS) $(INC)
+AMIGAWARN = -Wall -Wextra
+LDFLAGS = -noixemul $(CPU) -Wl,-Map,$(BUILD)/$(PROG).map
+LIBS    = -L$(SDL2KIT)/lib -lSDL2_image -lSDL2_mixer -lSDL2 -lm
+
+BUILD   = build/amigaos
+OBJDIR  = $(BUILD)/obj
+PROG    = Abbaye
+DIST    = dist
+OUT     = $(DIST)/Abbaye
+
+# Upstream's Makefile list.
+SRC     = src/drawing.c src/ending.c src/enemies.c src/game.c src/gameover.c \
+          src/history.c src/jean.c src/loading.c src/main.c src/startscreen.c
+OBJS    = $(SRC:%.c=$(OBJDIR)/%.o) \
+          $(OBJDIR)/amiga/stack.o $(OBJDIR)/amiga/amiga_screens.o \
+          $(OBJDIR)/amiga/amiga_message.o
+
+ICONS   = $(wildcard amiga/icons/*.info)
+DATADIRS = graphics sounds data
+
+all: $(BUILD)/$(PROG)
+
+$(BUILD)/$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+$(OBJDIR)/amiga/%.o: amiga/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -I$(NDK) $(AMIGAWARN) -c -o $@ $<
+
+$(OBJDIR)/src/%.o: src/%.c $(wildcard src/*.h)
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Upstream's data as it is (graphics and sounds CC BY 3.0, see
+# amiga/Licences.txt): every PNG is already RGBA or a palette picture, so
+# none needs storing as RGBA for SDL2_image.module 0.6.
+dist: $(BUILD)/$(PROG) $(ICONS) AMIGA_PORT.md COPYING ReadMe.md amiga/Licences.txt
+	rm -rf $(OUT) && mkdir -p $(OUT)
+	cp $(BUILD)/$(PROG) $(OUT)/
+	for d in $(DATADIRS); do mkdir -p $(OUT)/$$d && cp $$d/* $(OUT)/$$d/ ; done
+	cp AMIGA_PORT.md $(OUT)/ReadMe
+	cp ReadMe.md $(OUT)/ReadMe-abbaye
+	cp COPYING $(OUT)/COPYING.txt
+	cp amiga/Licences.txt $(OUT)/Licences.txt
+	cp amiga/icons/Abbaye.info amiga/icons/ReadMe.info $(OUT)/
+	for f in ReadMe-abbaye COPYING.txt Licences.txt; do cp amiga/icons/ReadMe.info $(OUT)/$$f.info; done
+	for d in $(DATADIRS); do cp amiga/icons/Data.info $(OUT)/$$d.info; done
+	cp amiga/icons/Abbaye-drawer.info $(DIST)/Abbaye.info
+
+objs: $(OBJS)
+
+clean:
+	rm -rf $(BUILD)
+
+distclean: clean
+	rm -rf $(DIST)
+
+.PHONY: all dist objs clean distclean
