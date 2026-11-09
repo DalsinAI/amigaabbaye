@@ -73,7 +73,6 @@ dist: $(BUILD)/$(PROG) $(ICONS) AMIGA_PORT.md COPYING ReadMe.md amiga/Licences.t
 	cp amiga/Licences.txt $(OUT)/Licences.txt
 	cp amiga/icons/Abbaye.info amiga/icons/ReadMe.info $(OUT)/
 	for f in ReadMe-abbaye COPYING.txt Licences.txt; do cp amiga/icons/ReadMe.info $(OUT)/$$f.info; done
-	for d in $(DATADIRS); do cp amiga/icons/Data.info $(OUT)/$$d.info; done
 	cp amiga/icons/Abbaye-drawer.info $(DIST)/Abbaye.info
 
 objs: $(OBJS)
